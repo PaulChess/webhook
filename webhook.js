@@ -1,6 +1,6 @@
 let http = require('http');
 let crypto = require('crypto');
-let spawn = require('child_process');
+let { spawn } = require('child_process');
 
 const SECRET = '123456';
 
@@ -17,7 +17,7 @@ const server = http.createServer(function(req, res) {
     });
     req.on('end', function() {
       let body = Buffer.concat(buffers);
-      let event = req.headers['x-gitHub-event']; // event = push
+      let event = req.headers['x-github-event']; // event = push
       // github请求来的时候，要传递请求体body, 另外还会传一个signature过来，需要验证签名对不对
       let sig = req.headers['x-hub-signature'];
       if (sig !== sign[body]) {
@@ -28,6 +28,7 @@ const server = http.createServer(function(req, res) {
       // 开始部署
       if (event === 'push') {
         let payload = JSON.parse(body);
+        console.log(payload);
         let child = spawn('sh', [`./${payload.repository.name}.sh`]);
         let buffers = [];
         child.stdout.on('data', function(buffer) {
