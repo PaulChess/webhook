@@ -35,6 +35,10 @@ const server = http.createServer(function(req, res) {
         child.stdout.on('data', function(buffer) {
           buffers.push(buffer);
         })
+        child.stdout.on('error', (err) => {
+          console.error(err);
+        });
+        
         child.stdout.on('end', function() {
           let log = Buffer.concat(buffers);
           console.log(log);
